@@ -89,11 +89,15 @@ def get_playlist(yt, args):
   return playlist
 
 def parse_args():
-  # Parse command line options -d for dry_run and -p <value> for playlist name
+  # Parse command line options -d for dry_run collect remaining arguments as the playlist name
   parser = argparse.ArgumentParser(description='Create YouTube playlist from song list.')
   parser.add_argument('-d', '--dry-run', action='store_true', help='Perform a dry run without making any changes')
-  parser.add_argument('-p', '--playlist', type=str, help='Name of the target playlist', default=DEFAULT_PLAYLIST_NAME)
-  return parser.parse_args()
+  parser.add_argument("playlist", nargs="*", help="The value of the variable.")
+
+  args = parser.parse_args()
+  args.playlist = ' '.join(args.playlist)
+  
+  return args
 
 def main():
   args = parse_args()
