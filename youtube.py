@@ -136,7 +136,11 @@ class YouTube:
             next_page_token = response.get('nextPageToken')
         return playlist_items
 
-    def add_video_to_playlist(self, playlist_id, video_id):
+    def add_songs_to_playlist(self, playlist_id, video_ids):
+        for video_id in video_ids:
+            self.add_song_to_playlist(playlist_id, video_id)
+
+    def add_song_to_playlist(self, playlist_id, video_id):
         request_body = {
             'snippet': {
                 'playlistId': playlist_id,
@@ -152,5 +156,21 @@ class YouTube:
         ).execute()
         return response
 
+    def delete_video_to_playlist(self, playlist_id, video_id):
+        playlist_items = self.playlist_items(playlist_id)
+        for item in playlist_items:
+            if item['contentDetails']['videoId'] == video_id:
+                self.service.playlistItems().delete(id=item['id']).execute()
+                return
+
     def delete_playlist(self, playlist_id):
         self.service.playlists().delete(id=playlist_id).execute()
+
+    def playlist_name(self, playlist):
+        return playlist["snippet"]["title"]
+
+    def song_name(self, item):
+        return item["snippet"]["title"]
+
+    def song_id(self, item):
+        return item["snippet"]["resourceId"]["videoId"]
