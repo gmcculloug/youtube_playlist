@@ -14,12 +14,13 @@ class YouTube:
     API_NAME = 'youtube'
     API_VERSION = 'v3'
     API_MAX_RESULTS = 100
+    TOKEN_FILE = 'token.json'
     SCOPES = ['https://www.googleapis.com/auth/youtube',
                 'https://www.googleapis.com/auth/youtube.force-ssl']
 
-    def __init__(self, client_file):
+    def __init__(self, client_file=None):
         self.service = None
-        self.client_file = client_file
+        self.client_file = client_file if client_file else YouTube.TOKEN_FILE
         
     def init_service(self):        
         # self.service = create_service(self.client_file, self.API_NAME, self.API_VERSION, self.SCOPES)
@@ -36,7 +37,12 @@ class YouTube:
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
+                try:
+                    creds.refresh(Request())
+                except Exception as e:
+                    print(f"Error refreshing credentials: {e}")
+                    print("Please delete the 'token.json' file and try again.\n")
+                    raise
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     "credentials.json", self.SCOPES
@@ -156,12 +162,14 @@ class YouTube:
         ).execute()
         return response
 
-    def delete_video_to_playlist(self, playlist_id, video_id):
-        playlist_items = self.playlist_items(playlist_id)
-        for item in playlist_items:
-            if item['contentDetails']['videoId'] == video_id:
-                self.service.playlistItems().delete(id=item['id']).execute()
-                return
+    def delete_songs_from_playlist(self, playlist, songs):
+        for song in songs:
+            self.delete_song_from_playlist(playlist["id"], song)
+        return
+
+    def delete_song_from_playlist(self, playlist_id, item):
+        self.service.playlistItems().delete(id=item['id']).execute()
+        return
 
     def delete_playlist(self, playlist_id):
         self.service.playlists().delete(id=playlist_id).execute()
@@ -174,3 +182,11 @@ class YouTube:
 
     def song_id(self, item):
         return item["snippet"]["resourceId"]["videoId"]
+
+if __name__ == "__main__":
+    svc = YouTube()
+    svc.init_service()
+    svc.my_playlists()
+    playlists = svc.my_playlists()
+    for playlist in playlists:
+        print(svc.playlist_name(playlist))
