@@ -1,4 +1,4 @@
-# YouTube Playlist Creator
+# Playlist Creator
 
 A Python tool that creates YouTube or Spotify playlists from a song list file. The tool searches for songs in your "master" playlists and adds matching tracks to a target playlist.
 
@@ -20,10 +20,39 @@ This project allows you to:
 
 ### Installation
 
-1. Clone or download this repository
-2. Install dependencies:
+#### Setting up Python Virtual Environment on Mac
+
+1. Clone or download this repository:
+   ```bash
+   git clone <repository-url>
+   cd playlist_creator
+   ```
+
+2. Create a Python virtual environment:
+   ```bash
+   # Using venv (recommended for Python 3.3+)
+   python3 -m venv venv
+   
+   # Alternatively, using virtualenv if you have it installed
+   virtualenv venv
+   ```
+
+3. Activate the virtual environment:
+   ```bash
+   source venv/bin/activate
+   ```
+   
+   Note: You'll need to activate this environment each time you work on the project. To deactivate, simply run `deactivate`.
+
+4. Install the required dependencies:
    ```bash
    pip install -r requirements-test.txt
+   ```
+
+5. Verify the installation:
+   ```bash
+   python --version
+   pip list
    ```
 
 ### Authentication Setup
@@ -36,11 +65,38 @@ This project allows you to:
 5. Download the credentials JSON file and save it as `credentials.json` in the project directory
 
 #### Spotify Setup
-Set the following environment variables:
+
+1. Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+2. Log in with your Spotify account
+3. Click "Create app"
+4. Fill in the app details:
+   - App name: Choose any name (e.g., "YouTube Playlist Creator")
+   - App description: Brief description of your app
+   - Website: You can use `http://localhost` for personal use
+   - Redirect URI: Add `http://localhost:8080/callback`
+   - Check the boxes to agree to the terms
+5. Click "Save"
+6. On your app's page, click "Settings"
+7. Copy your Client ID and Client Secret
+
+Set the following environment variables in your terminal:
 ```bash
 export SPOTIFY_CLIENT_ID="your_spotify_client_id"
 export SPOTIFY_CLIENT_SECRET="your_spotify_client_secret"
 ```
+
+To make these environment variables persistent, add them to your shell profile file:
+```bash
+# For bash users
+echo 'export SPOTIFY_CLIENT_ID="your_spotify_client_id"' >> ~/.bash_profile
+echo 'export SPOTIFY_CLIENT_SECRET="your_spotify_client_secret"' >> ~/.bash_profile
+
+# For zsh users (default on newer Macs)
+echo 'export SPOTIFY_CLIENT_ID="your_spotify_client_id"' >> ~/.zshrc
+echo 'export SPOTIFY_CLIENT_SECRET="your_spotify_client_secret"' >> ~/.zshrc
+```
+
+Then restart your terminal or run `source ~/.bash_profile` (or `source ~/.zshrc` for zsh).
 
 ### Song List File
 
